@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/contentFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/calculator"
+            android:textAppearance="@android:style/TextAppearance.Material.Display1"
+            app:layout_constraintBottom_toBottomOf="@+id/contentFrame"
+            app:layout_constraintLeft_toLeftOf="@+id/contentFrame"
+            app:layout_constraintRight_toRightOf="@+id/contentFrame"
+            app:layout_constraintTop_toTopOf="@+id/contentFrame"
+            app:layout_constraintVertical_bias="0.19" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/loginTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="48dp"
+            app:layout_constraintLeft_toLeftOf="@+id/contentFrame"
+            app:layout_constraintRight_toRightOf="@+id/contentFrame"
+            app:layout_constraintTop_toBottomOf="@+id/title">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/account"
+                android:hint="@string/login"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/passwordTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="48dp"
+            app:layout_constraintLeft_toLeftOf="@+id/contentFrame"
+            app:layout_constraintRight_toRightOf="@+id/contentFrame"
+            app:layout_constraintTop_toBottomOf="@+id/loginTextInput">
+
+            <android.support.design.widget.TextInputEditText
+                android:hint="@string/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableStart="@drawable/lock" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/loginButtonsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="48dp"
+            android:layout_marginRight="48dp"
+            android:orientation="horizontal"
+            android:weightSum="3"
+            app:layout_constraintLeft_toLeftOf="@+id/contentFrame"
+            app:layout_constraintRight_toRightOf="@+id/contentFrame"
+            app:layout_constraintTop_toBottomOf="@+id/sendButton"
+            android:divider="?attr/dividerVertical"
+            android:showDividers="middle">
+
+            <Button
+                android:id="@+id/facebookLoginButton"
+                style="@android:style/Widget.Material.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:drawableTop="@drawable/facebook_box"
+                android:text="@string/login_with_facebook" />
+
+            <Button
+                android:id="@+id/googleLoginButton"
+                style="@android:style/Widget.Material.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:drawableTop="@drawable/google_plus"
+                android:text="@string/login_with_google" />
+
+            <Button
+                android:id="@+id/twitterLoginButton"
+                style="@android:style/Widget.Material.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="8dp"
+                android:drawableTop="@drawable/twitter"
+                android:text="@string/login_with_twitter" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/forgottenPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgotten_password"
+            app:layout_constraintRight_toRightOf="@+id/passwordTextInput"
+            app:layout_constraintTop_toBottomOf="@+id/passwordTextInput" />
+
+        <Button
+            android:gravity="center"
+            android:id="@+id/sendButton"
+            style="@android:style/Widget.Material.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="48dp"
+            android:layout_marginStart="48dp"
+            android:text="@string/send"
+            app:layout_constraintLeft_toLeftOf="@+id/contentFrame"
+            app:layout_constraintRight_toRightOf="@+id/contentFrame"
+            app:layout_constraintTop_toBottomOf="@+id/forgottenPassword" />
+
+        <TextView
+            android:id="@+id/registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/registration"
+            app:layout_constraintLeft_toLeftOf="@+id/contentFrame"
+            app:layout_constraintRight_toRightOf="@+id/contentFrame"
+            app:layout_constraintTop_toBottomOf="@+id/loginButtonsContainer" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</layout>
