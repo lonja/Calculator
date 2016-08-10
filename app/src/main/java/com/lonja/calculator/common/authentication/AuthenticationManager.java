@@ -1,6 +1,8 @@
 package com.lonja.calculator.common.authentication;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -29,11 +31,11 @@ public class AuthenticationManager {
 
     }
 
-    public void login(String username, String password) {
+    public void authenticate(String username, String password) {
 
     }
 
-    public void login(AuthenticationProvider provider) {
+    public void authenticate(AuthenticationProvider provider) {
         switch (provider) {
             case Facebook:
                 new FacebookAuthenticationStrategy(mFragmentActivity, new FacebookCallback<LoginResult>() {
@@ -53,26 +55,59 @@ public class AuthenticationManager {
 
                     }
                 }).login();
+                break;
             case Twitter:
                 new TwitterAuthenticationStrategy(mFragmentActivity, new Callback<TwitterSession>() {
                     @Override
                     public void success(Result<TwitterSession> result) {
-                        //TODO 09.08.16 get access token here
+                        String token = result.data.getAuthToken().token;
+                        Log.e("twitter token", token);
                     }
 
                     @Override
                     public void failure(TwitterException exception) {
-
+                        Log.e("twitter error", exception.getMessage());
                     }
                 }).login();
+                break;
             case Google:
                 new GoogleAuthenticationStrategy(mFragmentActivity).login();
+                break;
         }
 
+    }
+
+    public CallbackManager getCallbackManager() {
+        return null;
     }
 
     interface SocialAuthenticationStrategy {
 
         void login();
+    }
+
+    public class CallbackManager {
+
+        static final int GOOGLE_RC = 456;
+
+        static final int FACEBOOK_RC = 457;
+
+        static final int TWITTER_RC = 455;
+
+        public CallbackManager() {
+
+        }
+
+        public void onActivityResult(int requestCode, Intent data) {
+
+            switch (requestCode) {
+                case GOOGLE_RC:
+
+                case FACEBOOK_RC:
+
+                case TWITTER_RC:
+
+            }
+        }
     }
 }
