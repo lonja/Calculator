@@ -1,5 +1,6 @@
 package com.lonja.calculator.common.authentication;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
@@ -23,5 +24,10 @@ class TwitterAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
     @Override
     public void login() {
         mTwitterAuthClient.authorize(fragmentActivity, mTwitterSessionCallback);
+    }
+
+    @Override
+    public void executeCallbacks(int requestCode, int responseCode, Intent data) {
+        mTwitterAuthClient.onActivityResult(requestCode, requestCode, data);
     }
 }

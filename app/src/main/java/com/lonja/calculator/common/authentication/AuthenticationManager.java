@@ -17,6 +17,12 @@ public class AuthenticationManager {
 
     private FragmentActivity mFragmentActivity;
 
+    private TwitterAuthenticationStrategy twitterAuthenticationStrategy;
+
+    private FacebookAuthenticationStrategy facebookAuthenticationStrategy;
+
+    private GoogleAuthenticationStrategy googleAuthenticationStrategy;
+
     private Token facebookToken;
 
     private Token twitterToken;
@@ -38,40 +44,45 @@ public class AuthenticationManager {
     public void authenticate(AuthenticationProvider provider) {
         switch (provider) {
             case Facebook:
-                new FacebookAuthenticationStrategy(mFragmentActivity, new FacebookCallback<LoginResult>() {
+                facebookAuthenticationStrategy = new FacebookAuthenticationStrategy(mFragmentActivity,
+                        new FacebookCallback<LoginResult>() {
 
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        String token = loginResult.getAccessToken().getToken();
-                    }
+                            @Override
+                            public void onSuccess(LoginResult loginResult) {
+                                String token = loginResult.getAccessToken().getToken();
+                            }
 
-                    @Override
-                    public void onCancel() {
+                            @Override
+                            public void onCancel() {
 
-                    }
+                            }
 
-                    @Override
-                    public void onError(FacebookException error) {
+                            @Override
+                            public void onError(FacebookException error) {
 
-                    }
-                }).login();
+                            }
+                        });
+                facebookAuthenticationStrategy.login();
                 break;
             case Twitter:
-                new TwitterAuthenticationStrategy(mFragmentActivity, new Callback<TwitterSession>() {
-                    @Override
-                    public void success(Result<TwitterSession> result) {
-                        String token = result.data.getAuthToken().token;
-                        Log.e("twitter token", token);
-                    }
+                twitterAuthenticationStrategy = new TwitterAuthenticationStrategy(mFragmentActivity,
+                        new Callback<TwitterSession>() {
+                            @Override
+                            public void success(Result<TwitterSession> result) {
+                                String token = result.data.getAuthToken().token;
+                                Log.e("twitter token", token);
+                            }
 
-                    @Override
-                    public void failure(TwitterException exception) {
-                        Log.e("twitter error", exception.getMessage());
-                    }
-                }).login();
+                            @Override
+                            public void failure(TwitterException exception) {
+                                Log.e("twitter error", exception.getMessage());
+                            }
+                        });
+                twitterAuthenticationStrategy.login();
                 break;
             case Google:
-                new GoogleAuthenticationStrategy(mFragmentActivity).login();
+                googleAuthenticationStrategy = new GoogleAuthenticationStrategy(mFragmentActivity);
+                googleAuthenticationStrategy.login();
                 break;
         }
 
@@ -98,15 +109,14 @@ public class AuthenticationManager {
 
         }
 
-        public void onActivityResult(int requestCode, Intent data) {
-
+        public void onAuthenticationResult(int requestCode, int resultCode, Intent data) {
             switch (requestCode) {
                 case GOOGLE_RC:
-
+                    googleAuthenticationStrategy.executeCallbacks(requestCode, resultCode, data);
                 case FACEBOOK_RC:
-
+                    facebookAuthenticationStrategy.executeCallbacks(requestCode, resultCode, data);
                 case TWITTER_RC:
-
+                    twitterAuthenticationStrategy.executeCallbacks(requestCode, resultCode, data);
             }
         }
     }

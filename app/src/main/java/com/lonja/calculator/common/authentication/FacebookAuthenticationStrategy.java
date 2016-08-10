@@ -1,5 +1,6 @@
 package com.lonja.calculator.common.authentication;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
@@ -27,13 +28,18 @@ class FacebookAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
         mFacebookLoginResultCallback = loginResultCallback;
         mFacebookLoginManager = LoginManager.getInstance();
         mFacebookCallbackManager = CallbackManager.Factory.create();
-        mFacebookPermissions = Collections.singletonList("profile");
+        mFacebookPermissions = Collections.singletonList("public_profile");
         mFacebookLoginManager.registerCallback(mFacebookCallbackManager, mFacebookLoginResultCallback);
     }
 
     @Override
     public void login() {
         mFacebookLoginManager.logInWithReadPermissions(fragmentActivity, mFacebookPermissions);
+    }
+
+    @Override
+    public void executeCallbacks(int requestCode, int responseCode, Intent data) {
+        mFacebookCallbackManager.onActivityResult(requestCode, responseCode, data);
     }
 }
 

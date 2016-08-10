@@ -10,6 +10,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import static com.lonja.calculator.common.authentication.AuthenticationManager.CallbackManager.GOOGLE_RC;
+
 class GoogleAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
 
     private GoogleSignInOptions mGoogleSignInOptions;
@@ -44,8 +46,13 @@ class GoogleAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
     }
 
     @Override
+    public void executeCallbacks(int requestCode, int responseCode, Intent data) {
+
+    }
+
+    @Override
     public void login() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        fragmentActivity.startActivityForResult(signInIntent, 228);
+        fragmentActivity.startActivityForResult(signInIntent, GOOGLE_RC);
     }
 }
