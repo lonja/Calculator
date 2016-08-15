@@ -73,6 +73,7 @@
                 android:layout_alignEnd="@id/passwordEditText"
                 android:layout_below="@id/passwordEditText"
                 android:layout_marginTop="16dp"
+                android:onClick="@{() -> viewModel.restorePassword()}"
                 android:text="@string/forgotten_password"
                 android:textColor="@android:color/primary_text_dark" />
 
@@ -140,6 +141,7 @@
                 android:layout_below="@id/loginButtonsContainer"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
+                android:onClick="@{() -> viewModel.register()}"
                 android:text="@string/registration"
                 android:textColor="@android:color/primary_text_dark" />
         </RelativeLayout>
