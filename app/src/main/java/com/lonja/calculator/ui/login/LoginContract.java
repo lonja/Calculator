@@ -1,10 +1,15 @@
 package com.lonja.calculator.ui.login;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 
 public interface LoginContract {
 
     interface View extends com.lonja.calculator.ui.common.View {
+
+        void showValidationError(@NonNull String message);
+
+        void showValidationError(@StringRes int message);
 
         void showLoadingDialog();
 
