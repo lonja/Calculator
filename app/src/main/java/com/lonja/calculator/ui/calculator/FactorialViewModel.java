@@ -9,6 +9,7 @@ import com.lonja.calculator.ui.common.BaseViewModel;
 import com.lonja.calculator.ui.common.navigator.Navigator;
 
 import hugo.weaving.DebugLog;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.util.async.Async;
 
@@ -30,7 +31,7 @@ public class FactorialViewModel extends BaseViewModel<FactorialContract.View>
 
     @DebugLog
     public void calculate() {
-        Async.start(() -> FactorialHelper.findFactorialDigitsSum(value.get()))
+        Subscription subscription = Async.start(() -> FactorialHelper.findFactorialDigitsSum(value.get()))
                 .doOnSubscribe(() -> {
                     if (value.get() < 1000) {
                         return;
@@ -41,10 +42,12 @@ public class FactorialViewModel extends BaseViewModel<FactorialContract.View>
                 .doOnNext(result::set)
                 .doOnCompleted(getView()::hideProgress)
                 .subscribe();
+        subscriptions.add(subscription);
     }
 
     @DebugLog
     @Override
+    //FIXME 18.08.16 npe crash
     public void saveInstanceState(@NonNull Bundle outState) {
         if (value.get() != null) {
             outState.putInt(KEY_VALUE, value.get());
