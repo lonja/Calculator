@@ -46,14 +46,22 @@ public class FactorialViewModel extends BaseViewModel<FactorialContract.View>
     @DebugLog
     @Override
     public void saveInstanceState(@NonNull Bundle outState) {
-        outState.putInt(KEY_RESULT, result.get());
-        outState.putInt(KEY_VALUE, value.get());
+        if (value.get() != null) {
+            outState.putInt(KEY_VALUE, value.get());
+        }
+        if (value.get() != null) {
+            outState.putInt(KEY_RESULT, result.get());
+        }
     }
 
     @DebugLog
     @Override
     public void restoreInstanceState(@NonNull Bundle savedInstanceState) {
-        result.set(savedInstanceState.getInt(KEY_RESULT));
-        value.set(savedInstanceState.getInt(KEY_VALUE));
+        if (savedInstanceState.containsKey(KEY_VALUE)) {
+            savedInstanceState.getInt(KEY_VALUE, value.get());
+        }
+        if (savedInstanceState.containsKey(KEY_RESULT)) {
+            savedInstanceState.getInt(KEY_RESULT, result.get());
+        }
     }
 }

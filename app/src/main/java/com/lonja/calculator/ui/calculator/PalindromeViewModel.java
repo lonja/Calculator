@@ -21,7 +21,7 @@ public class PalindromeViewModel extends BaseViewModel<PalindromeFragment> {
     public final ObservableField<Boolean> isPalindrome = new ObservableField<>();
 
     @DebugLog
-    protected PalindromeViewModel(@NonNull Navigator navigator) {
+    public PalindromeViewModel(@NonNull Navigator navigator) {
         super(navigator);
     }
 
@@ -33,14 +33,22 @@ public class PalindromeViewModel extends BaseViewModel<PalindromeFragment> {
     @DebugLog
     @Override
     public void saveInstanceState(@NonNull Bundle outState) {
-        outState.putBoolean(KEY_IS_PALINDROME, isPalindrome.get());
-        outState.putInt(KEY_VALUE, value.get());
+        if (isPalindrome.get() != null) {
+            outState.putBoolean(KEY_IS_PALINDROME, isPalindrome.get());
+        }
+        if (value.get() != null) {
+            outState.putInt(KEY_VALUE, value.get());
+        }
     }
 
     @DebugLog
     @Override
     public void restoreInstanceState(@NonNull Bundle savedInstanceState) {
-        isPalindrome.set(savedInstanceState.getBoolean(KEY_IS_PALINDROME));
-        value.set(savedInstanceState.getInt(KEY_VALUE));
+        if (savedInstanceState.containsKey(KEY_IS_PALINDROME)) {
+            isPalindrome.set(savedInstanceState.getBoolean(KEY_IS_PALINDROME));
+        }
+        if (savedInstanceState.containsKey(KEY_VALUE)) {
+            value.set(savedInstanceState.getInt(KEY_VALUE));
+        }
     }
 }
