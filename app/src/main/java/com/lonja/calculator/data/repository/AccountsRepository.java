@@ -3,6 +3,7 @@ package com.lonja.calculator.data.repository;
 import android.accounts.AccountManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.lonja.calculator.data.entity.Account;
 import com.lonja.calculator.data.entity.Token;
@@ -128,10 +129,16 @@ public class AccountsRepository {
 
                 Token token = new Token();
                 token.setToken(mAccountManager.getUserData(account, Account.TOKEN));
-                token.setExpires(new Date(Long.parseLong(mAccountManager.getUserData(account,
-                        Account.TOKEN_EXPIRES_DATE))));
-                token.setLastRefresh(new Date(Long.parseLong(mAccountManager.getUserData(account,
-                        Account.TOKEN_REFRESH_DATE))));
+                String tokenExpiresString = mAccountManager.getUserData(account,
+                        Account.TOKEN_EXPIRES_DATE);
+                if (!TextUtils.isEmpty(tokenExpiresString)) {
+                    token.setExpires(new Date(Long.parseLong(tokenExpiresString)));
+                }
+                String tokenLastRefreshString = mAccountManager.getUserData(account,
+                        Account.TOKEN_REFRESH_DATE);
+                if (!TextUtils.isEmpty(tokenLastRefreshString)) {
+                    token.setLastRefresh(new Date(Long.parseLong(tokenLastRefreshString)));
+                }
                 token.setType(mAccountManager.getUserData(account, Account.TOKEN_TYPE));
 
                 user.setToken(token);
@@ -161,8 +168,12 @@ public class AccountsRepository {
             userData.putString(Account.LAST_NAME, account.getLastName());
             userData.putString(Account.EMAIL, account.getEmail());
             userData.putString(Account.PHONE_NUMBER, account.getPhoneNumber());
-            userData.putString(Account.TOKEN_EXPIRES_DATE, Long.toString(account.getToken().getExpires().getTime()));
-            userData.putString(Account.TOKEN_REFRESH_DATE, Long.toString(account.getToken().getLastRefresh().getTime()));
+            if (account.getToken().getExpires() != null) {
+                userData.putString(Account.TOKEN_EXPIRES_DATE, Long.toString(account.getToken().getExpires().getTime()));
+            }
+            if (account.getToken().getLastRefresh() != null) {
+                userData.putString(Account.TOKEN_REFRESH_DATE, Long.toString(account.getToken().getLastRefresh().getTime()));
+            }
             userData.putString(Account.TOKEN_TYPE, account.getToken().getType());
             boolean isSuccess = mAccountManager.addAccountExplicitly(user, account.getPassword(),
                     userData);
