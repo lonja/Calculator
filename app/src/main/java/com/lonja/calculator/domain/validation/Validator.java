@@ -25,6 +25,8 @@ public class Validator {
             case Phone:
                 mCurrentValidator = new PhoneValidator();
                 break;
+            case Pairs:
+                mCurrentValidator = new PairsValidator();
         }
         return mCurrentValidator.isValid(value);
     }

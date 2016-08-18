@@ -3,5 +3,5 @@ package com.lonja.calculator.domain.validation;
 
 public enum FieldType {
 
-    Username, Name, Password, Phone, Email
+    Username, Name, Password, Phone, Email, Pairs
 }
