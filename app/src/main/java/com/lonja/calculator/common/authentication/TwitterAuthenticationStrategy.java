@@ -28,6 +28,6 @@ class TwitterAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
 
     @Override
     public void executeCallbacks(int requestCode, int responseCode, Intent data) {
-        mTwitterAuthClient.onActivityResult(requestCode, requestCode, data);
+        mTwitterAuthClient.onActivityResult(requestCode, responseCode, data);
     }
 }
