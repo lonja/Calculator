@@ -8,18 +8,23 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.support.annotation.NonNull;
 
 import com.lonja.calculator.ui.login.LoginActivity;
+
+import static com.lonja.calculator.data.entity.Token.TokenType.SERVER;
 
 
 public class CalculatorAccountAuthenticator extends AbstractAccountAuthenticator {
 
     private Context mContext;
 
-    public CalculatorAccountAuthenticator(Context context) {
+    private AuthenticationManager mAuthenticationManager;
+
+    public CalculatorAccountAuthenticator(@NonNull Context context, @NonNull AuthenticationManager authenticationManager) {
         super(context);
         mContext = context;
+        mAuthenticationManager = authenticationManager;
     }
 
     @Override
@@ -52,25 +57,27 @@ public class CalculatorAccountAuthenticator extends AbstractAccountAuthenticator
     public Bundle getAuthToken(AccountAuthenticatorResponse accountAuthenticatorResponse,
                                Account account, String authTokenType, Bundle options) throws NetworkErrorException {
         final Bundle result = new Bundle();
-        final AccountManager am = AccountManager.get(mContext.getApplicationContext());
-        String authToken = am.peekAuthToken(account, authTokenType);
-        if (TextUtils.isEmpty(authToken)) {
-            final String password = am.getPassword(account);
-            if (!TextUtils.isEmpty(password)) {
-//                authToken = AuthTokenLoader.signIn(mContext, account.name, password);
-            }
-        }
-        if (!TextUtils.isEmpty(authToken)) {
-            result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-            result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
-            result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
-        } else {
-            final Intent intent = new Intent(mContext, LoginActivity.class);
-            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
-            intent.putExtra(LoginActivity.EXTRA_TOKEN_TYPE, authTokenType);
-            final Bundle bundle = new Bundle();
-            bundle.putParcelable(AccountManager.KEY_INTENT, intent);
-        }
+        mAuthenticationManager.getAccountFromAccountManager()
+                .flatMap(responseAccount -> {
+                    switch (responseAccount.getToken().getType()) {
+                        case SERVER:
+                            return mAuthenticationManager.authenticate(responseAccount.getUsername(),
+                                    responseAccount.getPassword());
+                        default:
+                            return mAuthenticationManager.validateToken(responseAccount);
+                    }
+                })
+                .doOnNext(responseAccount -> {
+                    result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+                    result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+                    result.putString(AccountManager.KEY_AUTHTOKEN, responseAccount.getToken().getToken());
+                })
+                .doOnError(throwable -> {
+                    Intent intent = new Intent(mContext, LoginActivity.class);
+                    intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, accountAuthenticatorResponse);
+                    result.putParcelable(AccountManager.KEY_INTENT, intent);
+                })
+                .subscribe();
         return result;
     }
 
