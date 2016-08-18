@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.lonja.calculator.R;
 
 class GoogleAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
 
@@ -18,14 +19,15 @@ class GoogleAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
 
     private GoogleApiClient mGoogleApiClient;
 
-    private GoogleCallback<GoogleSignInResult> mSignInResultCallback;
+    private volatile GoogleCallback<GoogleSignInResult> mSignInResultCallback;
 
     GoogleAuthenticationStrategy(@NonNull FragmentActivity activity,
                                  @NonNull GoogleCallback<GoogleSignInResult> callback) {
         super(activity);
         mSignInResultCallback = callback;
         mGoogleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
+                .requestProfile()
+                .requestIdToken(fragmentActivity.getString(R.string.google_client_id))
                 .build();
         mGoogleApiClient = new GoogleApiClient.Builder(fragmentActivity)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -39,22 +41,21 @@ class GoogleAuthenticationStrategy extends BaseSocialAuthenticationStrategy {
 
                     }
                 })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-                        mSignInResultCallback.onError(new Exception(connectionResult.getErrorMessage()));
-                    }
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
+                .addOnConnectionFailedListener(connectionResult ->
+                        mSignInResultCallback.onError(new Exception(connectionResult.getErrorMessage())))
+                .addApi(Auth.GOOGLE_SIGN_IN_API, mGoogleSignInOptions)
                 .build();
+        mGoogleApiClient.connect();
     }
 
     @Override
-    public void executeCallbacks(int requestCode, int responseCode, Intent data) {
+    public void executeCallbacks(int requestCode, int responseCode, final Intent data) {
         if (responseCode == Activity.RESULT_OK) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            mSignInResultCallback.onSuccess(result);
             return;
         }
-        mSignInResultCallback.onSuccess(Auth.GoogleSignInApi.getSignInResultFromIntent(data));
+        mSignInResultCallback.onError(new GoogleAuthException("Authorize failed"));
     }
 
     @Override
