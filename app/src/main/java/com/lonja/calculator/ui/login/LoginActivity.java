@@ -18,8 +18,6 @@ import com.lonja.calculator.domain.validation.Validator;
 import com.lonja.calculator.ui.common.BaseActivity;
 import com.lonja.calculator.ui.common.navigator.ActivityNavigator;
 
-import io.realm.Realm;
-
 
 public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewModel> implements LoginContract.View {
 
@@ -30,11 +28,11 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding, LoginViewM
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Realm realm = Realm.getDefaultInstance();
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setMessage("Logging in");
         AccountsRepository repository = AccountsRepository.getInstance(realm, AccountManager.get(this));
-        AuthenticationManager manager = new AuthenticationManager(this, repository);
+        AuthenticationManager manager = new AuthenticationManager(repository);
+        manager.setFragmentActivity(this);
         LoginViewModel viewModel = new LoginViewModel(new ActivityNavigator(this), manager, repository,
                 new Validator(), this);
         setViewModel(viewModel);

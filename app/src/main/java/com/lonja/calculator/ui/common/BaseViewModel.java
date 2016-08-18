@@ -8,9 +8,13 @@ import android.support.annotation.Nullable;
 
 import com.lonja.calculator.ui.common.navigator.Navigator;
 
+import rx.subscriptions.CompositeSubscription;
+
 public abstract class BaseViewModel<V extends View> extends BaseObservable implements ViewModel<V> {
 
     protected Navigator navigator;
+
+    protected CompositeSubscription subscriptions = new CompositeSubscription();
 
     private V mView;
 
@@ -26,13 +30,16 @@ public abstract class BaseViewModel<V extends View> extends BaseObservable imple
     @CallSuper
     public void attachView(@NonNull V view, @Nullable Bundle savedInstanceState) {
         mView = view;
-        if(savedInstanceState != null) { restoreInstanceState(savedInstanceState); }
+        if (savedInstanceState != null) {
+            restoreInstanceState(savedInstanceState);
+        }
     }
 
     @Override
     @CallSuper
     public void detachView() {
         mView = null;
+        subscriptions = null;
     }
 
 }

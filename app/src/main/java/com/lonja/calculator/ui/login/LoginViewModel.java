@@ -22,8 +22,9 @@ import com.lonja.calculator.ui.login.LoginContract.ViewModel;
 import com.lonja.calculator.ui.passwordrestore.PasswordRecoveryActivity;
 import com.lonja.calculator.ui.registration.RegistrationActivity;
 
+import hugo.weaving.DebugLog;
 import rx.Subscriber;
-import rx.subscriptions.CompositeSubscription;
+import rx.Subscription;
 
 
 public class LoginViewModel extends BaseViewModel<View> implements ViewModel<View> {
@@ -38,8 +39,6 @@ public class LoginViewModel extends BaseViewModel<View> implements ViewModel<Vie
 
     private Validator mValidator;
 
-    private CompositeSubscription mSubscriptions;
-
     private boolean isUsernameValid;
     private boolean isPasswordValid;
 
@@ -53,44 +52,47 @@ public class LoginViewModel extends BaseViewModel<View> implements ViewModel<Vie
         mContext = context;
         mAccountsRepository = repository;
         mValidator = validator;
-        mSubscriptions = new CompositeSubscription();
     }
 
     @Override
     public void loginWithFacebook() {
-        mManager.authenticate(AuthenticationProvider.Facebook)
+        Subscription subscription = mManager.authenticate(AuthenticationProvider.Facebook)
                 .flatMap(account -> mAccountsRepository.addAccountToAccountManager(account))
                 .subscribe(new Subscriber<Account>() {
+                    @DebugLog
                     @Override
                     public void onCompleted() {
-
+                        navigator.startActivityWithClosing(CalculatorActivity.class);
                     }
 
+                    @DebugLog
                     @Override
                     public void onError(Throwable e) {
-
+                        getView().showLoginError(e.getMessage());
                     }
 
+                    @DebugLog
                     @Override
                     public void onNext(Account account) {
 
                     }
                 });
+        subscriptions.add(subscription);
     }
 
     @Override
     public void loginWithTwitter() {
-        mManager.authenticate(AuthenticationProvider.Twitter)
+        Subscription subscription = mManager.authenticate(AuthenticationProvider.Twitter)
                 .flatMap(account -> mAccountsRepository.addAccountToAccountManager(account))
                 .subscribe(new Subscriber<Account>() {
                     @Override
                     public void onCompleted() {
-
+                        navigator.startActivityWithClosing(CalculatorActivity.class);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        getView().showLoginError(e.getMessage());
                     }
 
                     @Override
@@ -98,28 +100,34 @@ public class LoginViewModel extends BaseViewModel<View> implements ViewModel<Vie
 
                     }
                 });
+        subscriptions.add(subscription);
     }
 
     @Override
     public void loginWithGoogle() {
-        mManager.authenticate(AuthenticationProvider.Google)
+        Subscription subscription = mManager.authenticate(AuthenticationProvider.Google)
                 .flatMap(account -> mAccountsRepository.addAccountToAccountManager(account))
                 .subscribe(new Subscriber<Account>() {
+
+                    @DebugLog
                     @Override
                     public void onCompleted() {
-
+                        navigator.startActivityWithClosing(CalculatorActivity.class);
                     }
 
+                    @DebugLog
                     @Override
                     public void onError(Throwable e) {
-
+                        getView().showLoginError(e.getMessage());
                     }
 
+                    @DebugLog
                     @Override
                     public void onNext(Account account) {
 
                     }
                 });
+        subscriptions.add(subscription);
     }
 
     @Override
@@ -130,7 +138,7 @@ public class LoginViewModel extends BaseViewModel<View> implements ViewModel<Vie
             getView().showValidationError(R.string.invalid_password);
         } else {
             getView().showLoadingDialog();
-            mManager.authenticate(username.get(), password.get())
+            Subscription subscription = mManager.authenticate(username.get(), password.get())
                     .subscribe(new Subscriber<Account>() {
                         @Override
                         public void onCompleted() {
@@ -148,6 +156,7 @@ public class LoginViewModel extends BaseViewModel<View> implements ViewModel<Vie
 
                         }
                     });
+            subscriptions.add(subscription);
         }
     }
 

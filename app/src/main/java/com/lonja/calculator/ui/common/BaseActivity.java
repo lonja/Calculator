@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.lonja.calculator.BR;
 
+import io.realm.Realm;
+
 public abstract class BaseActivity<B extends ViewDataBinding, VM extends ViewModel>
         extends AppCompatActivity {
 
@@ -17,10 +19,12 @@ public abstract class BaseActivity<B extends ViewDataBinding, VM extends ViewMod
 
     protected VM viewModel;
 
+    protected Realm realm = Realm.getDefaultInstance();
+
     protected final void setAndBindContentView(@LayoutRes int layoutId,
                                                @Nullable Bundle savedInstanceState) {
         if (viewModel == null) {
-            throw new IllegalStateException("viewModel must not be null and should be injected via activityComponent().inject(this)");
+            throw new IllegalStateException("viewModel must not be null and should be injected");
         }
         binding = DataBindingUtil.setContentView(this, layoutId);
         binding.setVariable(BR.viewModel, viewModel);
@@ -44,13 +48,12 @@ public abstract class BaseActivity<B extends ViewDataBinding, VM extends ViewMod
         if (viewModel != null) {
             viewModel.detachView();
         }
-//        if (realm != null) {
-//            realm.close();
-//        }
+        if (realm != null) {
+            realm.close();
+        }
         binding = null;
         viewModel = null;
-//        mActivityComponent = null;
-//        realm = null;
+        realm = null;
     }
 
     public void setViewModel(VM viewModel) {

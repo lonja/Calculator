@@ -4,19 +4,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.lonja.calculator.R;
-import com.lonja.calculator.databinding.ActivityMainBinding;
+import com.lonja.calculator.databinding.ActivityCalculatorBinding;
 import com.lonja.calculator.ui.common.BaseActivity;
 import com.lonja.calculator.ui.common.View;
 import com.lonja.calculator.ui.common.navigator.ActivityNavigator;
 
-public class CalculatorActivity extends BaseActivity<ActivityMainBinding, CalculatorViewModel>
+public class CalculatorActivity extends BaseActivity<ActivityCalculatorBinding, CalculatorViewModel>
         implements View {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setViewModel(new CalculatorViewModel(new ActivityNavigator(this)));
-        setAndBindContentView(R.layout.activity_main, savedInstanceState);
+        setAndBindContentView(R.layout.activity_calculator, savedInstanceState);
 
         setSupportActionBar(binding.toolbar);
 

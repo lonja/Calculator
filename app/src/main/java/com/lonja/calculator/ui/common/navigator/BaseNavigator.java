@@ -76,6 +76,11 @@ public abstract class BaseNavigator implements Navigator {
     }
 
     @Override
+    public void finish() {
+        getActivity().finish();
+    }
+
+    @Override
     public final void replaceFragment(@IdRes int containerId, Fragment fragment, Bundle args) {
         replaceFragmentInternal(getActivity().getSupportFragmentManager(), containerId, fragment, null, args, false, null);
     }

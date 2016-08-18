@@ -24,7 +24,7 @@ public abstract class BaseFragment<B extends ViewDataBinding, VM extends ViewMod
                                                             @LayoutRes int layoutResId,
                                                             Bundle savedInstanceState) {
         if (viewModel == null) {
-            throw new IllegalStateException("viewModel must not be null and should be injected via fragmentComponent().inject(this)");
+            throw new IllegalStateException("viewModel must not be null and should be injected");
         }
         binding = DataBindingUtil.inflate(inflater, layoutResId, container, false);
         binding.setVariable(BR.viewModel, viewModel);
